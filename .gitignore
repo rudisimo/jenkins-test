@@ -1,0 +1,13 @@
+# Mac
+.DS_Store
+
+# Ant
+cache.properties
+
+# Composer
+composer.lock
+
+# Eclipse
+.buildpath
+.project
+.settings/

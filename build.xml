@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="choicemd" default="build">
+    <target name="build" depends="prepare,composer,lint"/>
+
+    <target name="build-parallel" depends="prepare,lint"/>
+
+    <target name="clean" description="Cleanup build artifacts">
+        <delete dir="${basedir}/build/coverage"/>
+        <delete dir="${basedir}/build/logs"/>
+    </target>
+
+    <target name="prepare" depends="clean" description="Prepare for build">
+        <mkdir dir="${basedir}/build/coverage"/>
+        <mkdir dir="${basedir}/build/logs"/>
+    </target>
+
+    <target name="composer" depends="clean" description="Install vendor dependencies via Composer">
+        <exec dir="${basedir}/" executable="php" failonerror="true">
+            <arg line="composer.phar install" />
+        </exec>
+    </target>
+
+    <target name="lint" description="Perform syntax check of sourcecode files">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+
+            <fileset dir="${basedir}/">
+                <include name="**/*.php" />
+                <exclude name="**/vendor/**" />
+                <modified />
+            </fileset>
+
+            <fileset dir="${basedir}/tests">
+                <include name="**/*.php" />
+                <modified />
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="phpunit" description="Run unit tests with PHPUnit" depends="composer">
+        <exec dir="${basedir}/tests" executable="phpunit" failonerror="true">
+            <arg line="--configuration=${basedir}/tests/phpunit.xml
+                       --testdox-html=${basedir}/build/logs/testdox.html" />
+        </exec>
+    </target>
+</project>
